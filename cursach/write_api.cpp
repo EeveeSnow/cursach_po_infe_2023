@@ -3,6 +3,7 @@
 #include "dynamic.cpp"
 using namespace std;
 #include "write_api.h"
+#include <string.h>
 
 bool SaveFile(List<TRec> data, char* filename)
 {
@@ -44,54 +45,56 @@ bool SaveFile(List<TRec> data, char* filename)
     return true;
 }
 
-// struct TRec WriteFile(TRec data, TRec2 data2)
-// {
-//     if (data2.is_read)
-//     {
-//         string info;
-//         int i = 0, idn = data.size();
-//         system("cls"); //очистка экрана
-//         puts("Зпаишите данные в формате");
-//         puts("Имя ; Режисер ; год ; продажи ; цена");
-//         puts("через пробел. Для сохранения введите: `");
-//         fflush(stdin);
-//         cin >> info;
-//         while (info != (string)"`")
-//         {
-//             switch (i) 
-//             {
-//                 case 0:
-//                     data.id.append(idn);
-//                     data.name.append(info);
-//                     break;
-//                 case 1:
-//                     data.director.append(info);
-//                     break;
-//                 case 2:
-//                     data.year.append(info);
-//                     break;
-//                 case 3:
-//                     data.time.append(info);
-//                     break;
-//                 case 4:
-//                     data.price.append(info);
-//                     idn++;
-//                     i = -1;
-//                     break;
-//             }
-//             i++;
-//             cin >> info;
-//         }
-//         if (i == 0)
-//         {
-//             data.is_saved = false;
-//             return data;
-//         }
-//     }
-        
-// }
-void write_new_data(List<TRec> &data, TRec info)
+void write_new_data(List<TRec> &data, TRec &info)
 {
     data.append(info);
 }
 
+bool base_sort(List<TRec>& data, int n)
+{
+    int h = 0;
+    for (int i = 0; i < data.size(); i++)
+    {
+        for (int j = 0; j < data.size() - 1; j++)
+        {
+            switch (n)
+            {
+            case 1:
+                h = strcmp(data.hundler[j].name, data.hundler[j + 1].name);
+                break;
+            case 2:
+                h = strcmp(data.hundler[j].director, data.hundler[j + 1].director);
+                break;
+            case 3:
+                h = strcmp(data.hundler[j].year, data.hundler[j + 1].year);
+                break;
+            case 4:
+                h = strcmp(data.hundler[j].time, data.hundler[j + 1].time);
+                break;
+            case 5:
+                h = strcmp(data.hundler[j].score, data.hundler[j + 1].score);
+                break;
+            default:
+                return false;
+                break;
+            }
+            if (h > 0)
+            {
+                struct TRec hundler = data.hundler[j];
+                data.hundler[j] = data.hundler[j + 1];
+                data.hundler[j + 1] = hundler;
+            }
+        }
+    }
+    return true;
+}
+
+void change_info(List<TRec>& data,unsigned int n, TRec &info)
+{
+    data.hundler[n] = info;
+}
+
+void delete_line_by_index(List<TRec>& data,unsigned int n)
+{
+    data.pop(n);
+}

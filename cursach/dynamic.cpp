@@ -1,3 +1,4 @@
+#include "string.h"
 template <typename T> class List
 {
 public:
@@ -5,7 +6,22 @@ public:
     {
         now_size = 0;
         hundler = new T[now_size];
-    } 
+    }
+    ~List()
+    {
+        delete[] hundler;
+        delete[] temp;
+    }
+
+    List<T>& operator=(const List<T> &data)
+    {
+        if(&data != this)
+        {
+            hundler = data.hundler;
+            now_size = data.now_size;
+        }
+        return *this;
+    }
 
     void append(T info)
     {
@@ -19,6 +35,35 @@ public:
         hundler = temp;
     }
 
+    void pop(unsigned int n)
+    {
+        if (n < now_size)
+        {
+        temp = new T[now_size - 1];
+        for (unsigned int i = 0; i < n; i++)
+        {
+            temp[i] = hundler[i];
+        }
+        for (unsigned int i = n+1; i < now_size; i++)
+        {
+            temp[i] = hundler[i];
+        }
+        T data = hundler[n];
+        now_size--;
+        delete[] hundler;
+        hundler = temp;
+        }
+    }
+
+    List<T> search(char* info)
+    {
+        List<T> out;
+        for (unsigned int i = 0; i < now_size-1; i++)
+        {
+            if(strstr(hundler[i].name,info) != NULL) out.append(hundler[i]);
+        }
+        return out;
+    }
 
     void extend(unsigned int size)
     {

@@ -9,6 +9,7 @@ enum eCMD {
 //const int MAX_SIZE = 1000;
 // структура данных
 struct TRec {
+	int id;
 	char* name;
 	char* director;
 	char* year;

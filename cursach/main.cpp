@@ -21,6 +21,21 @@ void filename_menu()
 	cin >> Data2.Filename;
 }
 
+void add_menu(TRec &info)
+{
+	cout << "Введите данные через ENTER в формате:" << endl;
+	printf("%-s %-s %-s %-s %-s\n", "Имя - 32 символа", "Режисер - 32 символа", "год - 4 символа", "Время - 3 символа", "Оценка - 4 символа");
+	fflush(stdin);
+	char name[32];
+	char director[32];
+	char year[32];
+	char time[32];
+	char score[32];
+	cin >> name >> director >> year >> time >> score;
+	info = { info.id, name,director, year, time, score };
+	fflush(stdin);
+}
+
 eCMD Menu()
 {
 	//цикл для вывода меню, если ввели неправильно команду
@@ -56,13 +71,17 @@ eCMD Menu2()
 	{
 		setlocale(LC_ALL, "ru-RU");
 		puts("Выберите действие:"); //отображение меню
-		puts("1 - добавить информацию   5 - выход");
+		puts("1 - добавить информацию 2 - сортировка данных 3 - редактирование данных 4 - поиск по названию 5 - смена страницы  6 - выход");
 		unsigned opt;
 		fflush(stdin); //обнуление входного потока
 		scanf("%u", &opt);
 		switch (opt) { //возврат из функции команды
 		case 1: return CMD_ADD;
-		case 5: return CMD_EXIT;
+		case 2: return CMD_SORT;
+		case 3: return CMD_EDIT;
+		case 4: return CMD_FIND;
+		case 5: return CMD_PAGE;
+		case 6: return CMD_EXIT;
 		default: puts("Вы ввели неправильную команду");
 			system("pause");
 		}
@@ -118,18 +137,72 @@ int main(int argc, char* argv[])
             			{   
 							ShowFile(Data, page);
                 			TRec info = {};
-                			cout << "Введите данные через ENTER в формате:" << endl;
-                			printf("%-s %-s %-s %-s %-s\n", "Имя - 32 символа", "Режисер - 32 символа", "год - 4 символа", "Время - 3 символа", "Оценка - 4 символа");
-                			fflush(stdin);
-							fgets(info.name, 32, stdin);
-							fgets(info.director, 32, stdin);
-							fgets(info.year, 4, stdin);
-							fgets(info.time, 3, stdin);
-							fgets(info.score, 4, stdin);
+							info.id = Data.size();
+							add_menu(info);
 							write_new_data(Data, info);
-							system("pause");
 						}
-                
+						case CMD_SORT:
+						{
+							ShowFile(Data, page);
+							cout << "Введите номер строки по котоорой сортировать:" << endl;
+							printf("%-s %-s %-s %-s %-s\n", "Имя - 1", "Режисер - 2", "год - 3", "Время - 4", "Оценка - 5");
+							fflush(stdin);
+							int n = 0;
+							while (!n)
+							{
+								cin >> n;
+								n = (base_sort(Data, n) ? n : 0);
+							}
+						}
+						case CMD_EDIT:
+						{
+							ShowFile(Data, page);
+							cout << "Введите номер строки по которую изменить:" << endl;
+							fflush(stdin);
+							unsigned int n = Data.size();
+							while (n >= Data.size())
+							{
+								cin >> n;
+								n--;
+								if (n < Data.size())
+								{
+									ShowFile(Data, page);
+									TRec info = {};
+									info.id = n;
+									add_menu(info);
+									Data.hundler[n] = info;
+								}	
+							}
+							
+						}
+						case CMD_PAGE:
+						{
+							ShowFile(Data, page);
+							cout << "Введите номер страницы:" << endl;
+							unsigned int n = 0xffffff;
+							while (n > Data.size() / 10 + 1)
+							{
+								cin >> n;
+								if (n <= Data.size() / 10 + 1) page = --n;
+							}
+						}
+						case CMD_DELETE:
+						{
+							ShowFile(Data, page);
+							cout << "Введите номер строки:" << endl;
+							unsigned int n = 0xffffff;
+							cin >> n;
+							delete_line_by_index(Data, n);
+						}
+						case CMD_FIND:
+						{
+							ShowFile(Data, page);
+							cout << "Введите строку для поиска:" << endl;
+							char info[64];
+							cin >> info;
+							List<TRec> Data2 = Data.search(info);
+							ShowFile(Data2, 0);
+						}
             		}
 				}
 				break;

@@ -17,6 +17,7 @@ void ReadFile(List<TRec> &data, char* filename)
     if (file != NULL) {
         data.clear();
         char buffer[1024];
+        unsigned int j = 0;
         while (fgets(buffer, sizeof(buffer), file) != NULL)
         {
         buffer[strcspn(buffer, "\n")] = '\0';
@@ -56,7 +57,7 @@ void ReadFile(List<TRec> &data, char* filename)
             token = strtok(NULL, ";");
             n++;
         }
-        
+        info.id = j++;
         data.append(info);
         info = {};
         cout << data.hundler[0].score << " " << data.size() << endl; 
@@ -84,3 +85,4 @@ void ShowFile(List<TRec> &data,unsigned int page)
     }
     cout << "---------------------------------------------------------------------" << endl;
 }
+
