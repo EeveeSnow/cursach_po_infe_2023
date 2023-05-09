@@ -58,7 +58,7 @@ public:
     List<T> search(char* info)
     {
         List<T> out;
-        for (unsigned int i = 0; i < now_size-1; i++)
+        for (unsigned int i = 0; i < now_size; i++)
         {
             if(strstr(hundler[i].name,info) != NULL) out.append(hundler[i]);
         }

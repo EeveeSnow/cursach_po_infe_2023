@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define strdup _strdup
 using namespace std;
 
 void ReadFile(List<TRec> &data, char* filename)
@@ -30,27 +31,27 @@ void ReadFile(List<TRec> &data, char* filename)
             {
                 case 0:
                 {
-                    info.name = token;
+                    info.name = strdup(token);
                     break;
                 }
                 case 1:
                 {
-                    info.director = token;
+                    info.director = strdup(token);
                     break;
                 }
                 case 2:
                 {
-                    info.year = token;
+                    info.year = atoi(token);
                     break;
                 }
                 case 3:
                 {
-                    info.time = token;
+                    info.time = atoi(token);
                     break;
                 }
                 case 4:
                 {
-                    info.score = token;
+                    info.score = atof(token);
                     break;
                 }
             }
@@ -60,7 +61,6 @@ void ReadFile(List<TRec> &data, char* filename)
         info.id = j++;
         data.append(info);
         info = {};
-        cout << data.hundler[0].score << " " << data.size() << endl; 
     }
     }
     else {
@@ -70,19 +70,20 @@ void ReadFile(List<TRec> &data, char* filename)
     }
     // Закрываем файл
     fclose(file);
+    system("pause");
 }
 
 void ShowFile(List<TRec> &data,unsigned int page)
 {
     system("cls");
     cout << "Количество строк: " << data.size() << "            " << "Страница: " << page + 1 << " из: " << data.size() / 10 + 1 << endl;
-    cout << "---------------------------------------------------------------------" << endl;
-    printf("| %-32s | %-32s | %-4s | %-7s | %-4s |\n", "Имя", "Режисер", "год", "Время", "Оценка");
-    for (int i = page*10; i < data.size(); i++)
+    cout << "-----------------------------------------------------------------------------------------------------" << endl;
+    printf("| %-3s | %-35s | %-39s | %-7s | %-10s | %-4s |\n", "#", "Имя", "Режисер", "год", "Время", "Оценка");
+    for (int i = page*10; i < (page+1)*10 && i < data.size(); i++)
     {
-        cout << "---------------------------------------------------------------------" << endl;
-        printf("| %-32s | %-32s | %4s | %3s | %4s |\n", data.hundler[i].name, data.hundler[i].director, data.hundler[i].year, data.hundler[i].time, data.hundler[i].score);
+        cout << "-----------------------------------------------------------------------------------------------------" << endl;
+        printf("| %-3d | %-32.32s | %-32.32s | %4d | %7d | %2.2f |\n", data.hundler[i].id + 1, data.hundler[i].name, data.hundler[i].director, data.hundler[i].year, data.hundler[i].time, data.hundler[i].score);
     }
-    cout << "---------------------------------------------------------------------" << endl;
+    cout << "-----------------------------------------------------------------------------------------------------" << endl;
 }
 

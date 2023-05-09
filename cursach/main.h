@@ -12,9 +12,9 @@ struct TRec {
 	int id;
 	char* name;
 	char* director;
-	char* year;
-	char* time;
-	char* score;
+	int year;
+	int time;
+	float score;
 
 };
 

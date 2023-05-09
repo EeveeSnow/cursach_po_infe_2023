@@ -5,6 +5,7 @@
 #include "read_api.h"
 #include <locale.h>
 #include "write_api.h"
+#define strdup _strdup
 #pragma warning(disable : 4996)
 using namespace std;
 
@@ -28,11 +29,15 @@ void add_menu(TRec &info)
 	fflush(stdin);
 	char name[32];
 	char director[32];
-	char year[32];
-	char time[32];
-	char score[32];
-	cin >> name >> director >> year >> time >> score;
-	info = { info.id, name,director, year, time, score };
+	int year;
+	int time;
+	float score;
+	scanf("%[^\n]s", name);
+	fflush(stdin);
+	scanf("%[^\n]s", director);
+	fflush(stdin);
+	cin >> year >> time >> score;
+	info = { info.id, strdup(name),strdup(director), year, time, score};
 	fflush(stdin);
 }
 
@@ -52,6 +57,7 @@ eCMD Menu()
 		unsigned opt;
 		fflush(stdin); //обнуление входного потока
 		scanf("%u", &opt);
+		fflush(stdin);
 		switch (opt) { //возврат из функции команды
 		case 1: return CMD_READ;
 		case 2: return CMD_SHOW;
@@ -71,17 +77,19 @@ eCMD Menu2()
 	{
 		setlocale(LC_ALL, "ru-RU");
 		puts("Выберите действие:"); //отображение меню
-		puts("1 - добавить информацию 2 - сортировка данных 3 - редактирование данных 4 - поиск по названию 5 - смена страницы  6 - выход");
+		puts("1 - добавить информацию 2 - сортировка данных 3 - редактирование данных 4 - поиск по названию 5 - смена страницы 6 - удаление строки 7 - выход");
 		unsigned opt;
 		fflush(stdin); //обнуление входного потока
 		scanf("%u", &opt);
+		fflush(stdin);
 		switch (opt) { //возврат из функции команды
 		case 1: return CMD_ADD;
 		case 2: return CMD_SORT;
 		case 3: return CMD_EDIT;
 		case 4: return CMD_FIND;
 		case 5: return CMD_PAGE;
-		case 6: return CMD_EXIT;
+		case 6: return CMD_DELETE;
+		case 7: return CMD_EXIT;
 		default: puts("Вы ввели неправильную команду");
 			system("pause");
 		}
@@ -118,8 +126,6 @@ int main(int argc, char* argv[])
 			{
 				filename_menu();
 				ReadFile(Data, Data2.Filename);
-				cout << Data.size() << " " << Data.hundler[0].name<< " " << Data.hundler[1].name << " " << Data.hundler[0].score;
-				system("pause");
 				break;
 				
 			}
@@ -139,20 +145,30 @@ int main(int argc, char* argv[])
                 			TRec info = {};
 							info.id = Data.size();
 							add_menu(info);
-							write_new_data(Data, info);
+							Data.append(info);
+							break;
 						}
 						case CMD_SORT:
 						{
 							ShowFile(Data, page);
+							int n = 0;
+							int type = 0;
+							cout << "Для сортировки по возрастанию введите 1 или -1 для сортировки в обратном порядке." << endl;
+							while(type != -1 && type != 1)
+							{
+								cin >> type;
+								fflush(stdin);
+							}
 							cout << "Введите номер строки по котоорой сортировать:" << endl;
 							printf("%-s %-s %-s %-s %-s\n", "Имя - 1", "Режисер - 2", "год - 3", "Время - 4", "Оценка - 5");
 							fflush(stdin);
-							int n = 0;
 							while (!n)
 							{
 								cin >> n;
-								n = (base_sort(Data, n) ? n : 0);
+								fflush(stdin);
+								n = (base_sort(Data, n, type) ? n : 0);
 							}
+							break;
 						}
 						case CMD_EDIT:
 						{
@@ -173,6 +189,7 @@ int main(int argc, char* argv[])
 									Data.hundler[n] = info;
 								}	
 							}
+							break;
 							
 						}
 						case CMD_PAGE:
@@ -185,6 +202,7 @@ int main(int argc, char* argv[])
 								cin >> n;
 								if (n <= Data.size() / 10 + 1) page = --n;
 							}
+							break;
 						}
 						case CMD_DELETE:
 						{
@@ -192,16 +210,21 @@ int main(int argc, char* argv[])
 							cout << "Введите номер строки:" << endl;
 							unsigned int n = 0xffffff;
 							cin >> n;
-							delete_line_by_index(Data, n);
+							Data.pop(n - 1);
+							break;
 						}
 						case CMD_FIND:
 						{
 							ShowFile(Data, page);
 							cout << "Введите строку для поиска:" << endl;
-							char info[64];
-							cin >> info;
+							char info[32];
+							fflush(stdin);
+							scanf("%[^\n]s", info);
+							fflush(stdin);
 							List<TRec> Data2 = Data.search(info);
 							ShowFile(Data2, 0);
+							system("pause");
+							break;
 						}
             		}
 				}
