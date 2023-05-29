@@ -4,7 +4,6 @@ template <typename T> class List
 public:
     List()
     {
-        now_size = 0;
         hundler = new T[now_size];
     }
     ~List()
@@ -39,16 +38,16 @@ public:
     {
         if (n < now_size)
         {
-        temp = new T[now_size - 1];
+        temp = new T[now_size];
         for (unsigned int i = 0; i < n; i++)
         {
             temp[i] = hundler[i];
         }
-        for (unsigned int i = n+1; i < now_size; i++)
+        for (unsigned int i = ++n; i < now_size; i++)
         {
-            temp[i] = hundler[i];
+            temp[i-1] = hundler[i];
+            temp[i-1].id = i;
         }
-        T data = hundler[n];
         now_size--;
         delete[] hundler;
         hundler = temp;
@@ -92,8 +91,8 @@ public:
     }
 
     T* hundler;
-    unsigned int now_size;
+    unsigned int now_size = 0;
 
 private:
-    T* temp;
+    T* temp = 0;
 };

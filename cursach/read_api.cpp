@@ -9,10 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+// #include "things.h"
 #define strdup _strdup
 using namespace std;
 
-void ReadFile(List<TRec> &data, char* filename)
+void ReadFile(List<TRec> &data, char* filename, int encript_key)
 {
 	FILE* file = fopen(filename, "r");
     if (file != NULL) {
@@ -23,6 +24,7 @@ void ReadFile(List<TRec> &data, char* filename)
         {
         buffer[strcspn(buffer, "\n")] = '\0';
         struct TRec info = {};
+        sprintf(buffer, "%s", cript(buffer, encript_key * -1));
         char* token;
         token = strtok(buffer, ";");
         unsigned int n = 0;
@@ -70,20 +72,18 @@ void ReadFile(List<TRec> &data, char* filename)
     }
     // Закрываем файл
     fclose(file);
-    system("pause");
 }
 
-void ShowFile(List<TRec> &data,unsigned int page)
+void ShowFile(List<TRec> &data, unsigned int page, char* filename)
 {
     system("cls");
-    cout << "Количество строк: " << data.size() << "            " << "Страница: " << page + 1 << " из: " << data.size() / 10 + 1 << endl;
+    cout << "Количество строк: " << data.size() << "            " << "Страница: " << page + 1 << " из: " << data.size() / 10 + 1 << "            " << "Имя файла: " << filename << endl;
     cout << "-----------------------------------------------------------------------------------------------------" << endl;
     printf("| %-3s | %-35s | %-39s | %-7s | %-10s | %-4s |\n", "#", "Имя", "Режисер", "год", "Время", "Оценка");
     for (int i = page*10; i < (page+1)*10 && i < data.size(); i++)
     {
         cout << "-----------------------------------------------------------------------------------------------------" << endl;
-        printf("| %-3d | %-32.32s | %-32.32s | %4d | %7d | %2.2f |\n", data.hundler[i].id + 1, data.hundler[i].name, data.hundler[i].director, data.hundler[i].year, data.hundler[i].time, data.hundler[i].score);
+        printf("| %-3d | %-32.32s | %-32.32s | %4.4d | %7.3d | %2.2f |\n", data.hundler[i].id + 1, data.hundler[i].name, data.hundler[i].director, data.hundler[i].year, data.hundler[i].time, data.hundler[i].score);
     }
     cout << "-----------------------------------------------------------------------------------------------------" << endl;
 }
-

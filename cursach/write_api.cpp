@@ -3,16 +3,18 @@
 #include "dynamic.cpp"
 using namespace std;
 #include "write_api.h"
+// #include "things.h"
 #include <string.h>
 
-bool SaveFile(List<TRec> data, char* filename)
+bool SaveFile(List<TRec> &data, char* filename, int encript_key)
 {
     FILE* file = fopen(filename, "w");
         // Записываем строки в файла по одной, пока не достигнем конца массива строк
     for (int i = 0; i < data.size(); i++)
     {
         char line[128];
-        sprintf(line, "%s;%s;%d;%d;%2.2f\n", data.hundler[i].name, data.hundler[i].director, data.hundler[i].year, data.hundler[i].time, data.hundler[i].score);
+        sprintf(line, "%s;%s;%d;%d;%2.2f", data.hundler[i].name, data.hundler[i].director, data.hundler[i].year, data.hundler[i].time, data.hundler[i].score);
+        sprintf(line, "%s\n", cript(line, encript_key));
         fputs(line, file);
     }
     // Закрываем файл
@@ -25,7 +27,7 @@ bool base_sort(List<TRec>& data, int n, int type)
     float h = 0;
     for (int i = 0; i < data.size(); i++)
     {
-        for (int j = 0; j < data.size(); j++)
+        for (int j = 0; j < data.size() - 1; j++)
         {
             switch (n)
             {
@@ -48,30 +50,14 @@ bool base_sort(List<TRec>& data, int n, int type)
                 return false;
                 break;
             }
-            if (type == 1)
+            if (h*type > 0)
             {
-                if (h > 0)
-                {
-                    struct TRec hundler = data.hundler[j];
-                    data.hundler[j] = data.hundler[j + 1];
-                    data.hundler[j + 1] = hundler;
-                }
-            }
-            else if (type == -1)
-            {
-                if (h < 0)
-                {
-                    struct TRec hundler = data.hundler[j];
-                    data.hundler[j] = data.hundler[j + 1];
-                    data.hundler[j + 1] = hundler;
-                }
+                struct TRec hundler = data.hundler[j];
+                data.hundler[j] = data.hundler[j + 1];
+                data.hundler[j + 1] = hundler;
             }
         }
     }
     return true;
 }
 
-void change_info(List<TRec>& data,unsigned int n, TRec &info)
-{
-    data.hundler[n] = info;
-}
